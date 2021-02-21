@@ -21,7 +21,7 @@ my %WriteMakefileArgs = (
     BUILD_REQUIRES      => {
         'Alien::Build'        => $alien_build_version,
         'ExtUtils::MakeMaker' => $ext_makemaker_version,
-        ( $^O eq 'MSWin32' ? ( 'Alien::cmake3' => '0.05' ) : ()),
+        'Alien::cmake3'       => '0.05',
     },
     CONFIGURE_REQUIRES  => {
         'Alien::Build'        => $alien_build_version,
@@ -44,12 +44,12 @@ my %WriteMakefileArgs = (
         resources => {
             homepage    => undef,
             repository  => {
-                url         => 'git@github.com:dxma/perl5-cpan.git',
-                web         => 'https://github.com/dxma/perl5-cpan',
+                url         => 'git@github.com:dxma/perl5-alien-libjq.git',
+                web         => 'https://github.com/dxma/perl5-alien-libjq',
                 type        => 'git',
             },
             bugtracker => {
-                web         => 'https://github.com/dxma/perl5-cpan/issues',
+                web         => 'https://github.com/dxma/perl5-alien-libjq/issues',
             },
         },
     })),

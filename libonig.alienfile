@@ -1,15 +1,5 @@
 use alienfile;
 
-# check if installed as system package on Linux
-#plugin 'PkgConfig' => 'libonig5';
-
-# verify it is GNU make
-#plugin 'Probe::CommandLine' => (
-#   command => $_,
-#   args    => [ '--version' ],
-#   match   => qr/GNU Make/o,
-#) for qw/gmake make/;
-
 # download utility available
 plugin 'Probe::CommandLine' => (
    command   => 'curl',
@@ -26,58 +16,17 @@ share {
       version => qr/^onig-([0-9\.]+)\.tar\.gz$/o,
    );
    plugin Extract => 'tar.gz';
-   if ($^O eq 'MSWin32') {
-      # #meta->prop->{env_interpolate} = 1;
-      # #meta->prop->{env}->{ONIG_DIR}  = '%{.install.extract}\\src';
-      # #meta->prop->{env}->{BUILD_DIR} = '%{.install.extract}';
-      # plugin 'Build::Make' => 'nmake';
-      # build [
-      #    sub {
-      #       my ( $build, ) = @_;
-
-      #       my $extract = $build->install_prop->{extract};
-      #       $extract =~ s#/#\\#go;
-      #       $ENV{ONIG_DIR}  = $extract. '\\src';
-      #       $ENV{BUILD_DIR} = $extract;
-      #       $build->install_prop->{onig_dir} = $ENV{ONIG_DIR};
-      #       $build->install_prop->{build_dir}= $ENV{BUILD_DIR};
-      #    },
-      #    'copy %{.install.onig_dir}\\config.h.windows.in %{.install.build_dir}\\config.h',
-      #    '%{make} -f %{.install.onig_dir}\\Makefile.windows',
-      # ];
-      plugin 'Build::CMake';
-      # require Strawberry perl gmake.exe
-      plugin 'Build::Make' => 'gmake';
-      build [
-         [ '%{cmake}', -G => '%{cmake_generator}',
-            '-DCMAKE_MAKE_PROGRAM:PATH=%{make}',
-            '-DBUILD_SHARED_LIBS:BOOL=OFF',
-            '-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON',
-            '-DCMAKE_INSTALL_PREFIX:PATH=%{.install.prefix}',
-            '.'
-         ],
-         '%{make}',
-         '%{make} install',
-      ];
-   }
-   elsif ($^O eq 'MacOS') {
-      # noop on Mac, jq compile will build this module
-   }
-   else {
-      build [
-         '%{sh} configure --disable-shared --with-pic --prefix=%{.install.prefix}',
-         '%{make}',
-         '%{make} install',
-      ];
-   }
+   plugin 'Build::CMake';
+   # require Strawberry perl gmake.exe
+   plugin 'Build::Make' => 'gmake';
+   build [
+      [ '%{cmake}', -G => '%{cmake_generator}', '-DCMAKE_MAKE_PROGRAM=%{make}',
+         '-DBUILD_SHARED_LIBS=OFF', '-DCMAKE_POSITION_INDEPENDENT_CODE=ON',
+         '-DCMAKE_INSTALL_PREFIX=%{.install.prefix}',
+         '.'
+      ],
+      '%{make}',
+      '%{make} install',
+   ];
    plugin 'Gather::IsolateDynamic';
-   # gather sub {
-   #    my ( $build, ) = @_;
-
-   #    my $prefix = $build->runtime_prop->{prefix};
-   #    $build->runtime_prop->{cflags}        = "-I$prefix/include";
-   #    $build->runtime_prop->{cflags_static} = "-I$prefix/include";
-   #    $build->runtime_prop->{libs}          = "-L$prefix/lib -lonig5";
-   #    $build->runtime_prop->{libs_static}   = "-L$prefix/lib -lonig5";
-   # };
 };

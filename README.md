@@ -1,15 +1,41 @@
-pod2text Alien::LibJQ.pm > README
+# Developer Note and Instruction on Alien::LibJQ
 
-If this is still here it means the programmer was too lazy to create the readme file.
+## What This Module is
 
-You can create it now by using the command shown above from this directory.
+This module makes perl binding for jq and its static library. JQ is a light-weight command-line JSON processor, refer to its [project page](https://stedolan.github.io/jq/) for more information.
 
-At the very least you should be able to use this set of instructions
-to install the module...
+## How to Install
 
-perl Makefile.PL
-make
-make test
-make install
+Install as usual:
+   ```shell
+   perl Makefile.PL
+   make
+   make test
+   make install
+   ```
 
-If you are on a windows box you should use 'nmake' rather than 'make'.
+   1. If you are on a windows box you should use 'nmake' rather than 'make'.
+   2. If you are using strawberry perl on windows you should use 'gmake'.
+
+## How This Module Performs the Build
+
+   1. Download oniguruma package and build static library using cmake.
+   2. Download and extract jq package.
+   3. Copy required script/cmake/source files into extracted jq package directory.
+   4. Build jq executable and static library using cmake.
+   5. Install both oniguruma and jq artifacts.
+
+## Cmake Advantage
+
+   1. Enhanced compile and link toolchain.
+   2. Fix a jq code portability issue (calling POSIX setenv) on windows mingw.
+
+## Windows Build Note
+
+   1. Only strawberry perl is tested.
+   2. Alien::cmake3 is required to build using cmake.
+   3. It is possible to build this package using autoconf approach on windows:
+      1. strawberry is required to provide a working gcc toolchain from mingw.
+      2. git windows package is required to offer bash executable on windows, installation path must NOT contain space (thus C:\Program Files not recommended).
+      3. run configure using sh/bash executable.
+      4. replace all MAKE variable value in generated Makefile by 'gmake' (from strawberry).
