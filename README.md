@@ -19,11 +19,10 @@ Install as usual:
 
 ## How This Module Performs the Build
 
-   1. Download oniguruma package and build static library using cmake.
-   2. Download and extract jq package.
-   3. Copy required script/cmake/source files into extracted jq package directory.
-   4. Build jq executable and static library using cmake.
-   5. Install both oniguruma and jq artifacts.
+   1. Download and extract jq package.
+   2. Copy required script/cmake/source files into extracted jq package directory.
+   3. Build jq executable and jq/oniguruma static libraries using cmake.
+   4. Install both jq and oniguruma artifacts.
 
 ## Cmake Advantage
 

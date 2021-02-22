@@ -6,9 +6,6 @@ use File::Spec;
 use Alien::Build;
 use Alien::Build::MM;
 
-build_libonig();
-exit 0;
-
 my $alien_build_version   = '2.37';
 my $ext_makemaker_version = '7.46';
 
@@ -60,18 +57,4 @@ WriteMakefile($abmm->mm_args(%WriteMakefileArgs));
 
 sub MY::postamble {
     $abmm->mm_postamble;
-}
-
-sub build_libonig {
-    my $build = Alien::Build->load('libonig.alienfile');
-    my $prefix = File::Spec->catdir($build->root, 'install');
-    return if -f File::Spec->catfile($prefix, 'lib', 'libonig.a');
-    $build->load_requires('configure');
-    $build->set_prefix($build);
-    $build->set_stage($prefix);
-    # for some reason, set_prefix doesn't work, set manually
-    $build->install_prop->{prefix} = $prefix;
-    $build->load_requires($build->install_type);
-    $build->download;
-    $build->build;
 }

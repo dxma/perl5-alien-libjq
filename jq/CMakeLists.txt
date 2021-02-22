@@ -74,6 +74,7 @@ endif()
 set(VERSION ${PACKAGE_VERSION})
 target_compile_definitions(jq_compiler_flags INTERFACE PACKAGE=${PACKAGE} VERSION=${VERSION})
 
+include(modules/oniguruma/cmake/dist.cmake)
 include(CheckCSourceCompiles)
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
@@ -231,6 +232,7 @@ check_symbol_exists(trunc        "math.h"  HAVE_TRUNC)
 check_symbol_exists(y0           "math.h"  HAVE_Y0)
 check_symbol_exists(y1           "math.h"  HAVE_Y1)
 check_symbol_exists(yn           "math.h"  HAVE_YN)
+unset(CMAKE_REQUIRED_LIBRARIES)
 target_compile_definitions_if_true(
   HAVE_ACOSH
   HAVE_ACOS
@@ -399,6 +401,10 @@ set_source_files_properties(src/builtin.c PROPERTIES OBJECT_DEPENDS src/builtin.
 
 if(${WITH_ONIGURUMA} STREQUAL "builtin")
   target_link_libraries(jq PUBLIC onig)
+  target_include_directories(jq PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/modules/oniguruma/src>
+  $<INSTALL_INTERFACE:include>
+  )
 elseif(HAVE_LIBONIG)
   target_link_libraries(jq PUBLIC oniguruma::onig)
 endif()
@@ -432,28 +438,11 @@ endif()
 if(ENABLE_DOCS)
 endif()
 
-# TODO: support packaging using CPack
-install(TARGETS jq_bin DESTINATION bin)
-install(TARGETS jq DESTINATION lib EXPORT jqTargets)
-install(FILES src/jv.h src/jq.h DESTINATION include)
-install(EXPORT jqTargets FILE jqTargets.cmake DESTINATION lib/cmake/jq)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jq.pc.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/jq.pc @ONLY)
 
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/jqConfig.cmake
-  INSTALL_DESTINATION lib/cmake/jq
-  NO_SET_AND_CHECK_MACRO
-  NO_CHECK_REQUIRED_COMPONENTS_MACRO
-)
-write_basic_package_version_file(
-  ${CMAKE_CURRENT_BINARY_DIR}/jqConfigVersion.cmake
-  VERSION ${PACKAGE_VERSION}
-  COMPATIBILITY AnyNewerVersion
-)
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/jqConfig.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/jqConfigVersion.cmake
-  DESTINATION lib/cmake/jq
-)
-#export(EXPORT jqTargets FILE ${CMAKE_CURRENT_BINARY_DIR}/jqTargets.cmake)
+# TODO: support full packaging
+install_library(jq)
+install_executable(jq_bin)
+install_header(src/jv.h src/jq.h)
+install_data(AUTHORS COPYING NEWS README)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/jq.pc DESTINATION lib/pkgconfig)
