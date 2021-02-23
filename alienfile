@@ -20,8 +20,6 @@ share {
    );
    plugin Extract => 'tar.gz';
    plugin 'Build::CMake';
-   # require Strawberry perl gmake.exe on windows
-   plugin 'Build::Make' => ( $^O eq 'MSWin32' ? 'gmake' : 'make' );
    build [
       # pitch in required cmake stuff
       'echo %cd%',
