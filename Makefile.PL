@@ -2,6 +2,8 @@ use ExtUtils::MakeMaker;
 use strict;
 use warnings;
 
+BEGIN { $ENV{ALIEN_INSTALL_TYPE} = 'share'; }
+
 use File::Spec;
 use Alien::Build;
 use Alien::Build::MM;
