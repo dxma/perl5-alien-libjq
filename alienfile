@@ -44,4 +44,16 @@ share {
       '%{make} install',
    ];
    plugin 'Gather::IsolateDynamic';
+   # save correct package settings
+   # for now there is no good way to retrieve them from cmake
+   gather sub {
+      my ( $build ) = @_;
+      my $prefix = $build->runtime_prop->{prefix};
+      $build->runtime_prop->{cflags}        = "-I$prefix/include";
+      $build->runtime_prop->{cflags_static} = "-I$prefix/include";
+      my $extra_libs = ' -lm';
+      $extra_libs .= ' -lshlwapi' if $^O eq 'MSWin32';
+      $build->runtime_prop->{libs}          = "-L$prefix/lib -ljq -lonig". $extra_libs;
+      $build->runtime_prop->{libs_static}   = "-L$prefix/lib -ljq -lonig". $extra_libs;
+   };
 };
