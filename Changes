@@ -1,5 +1,7 @@
 Revision history for Perl module Alien::LibJQ
 
+v0.05:
+   - switch back to github official site for package download.
 v0.04:
    - 1st working build on both Windows (Strawberry Perl) and Linux.
 v0.02 - v0.03:
