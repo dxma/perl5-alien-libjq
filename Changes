@@ -1,5 +1,7 @@
 Revision history for Perl module Alien::LibJQ
 
+v0.06:
+   - stick with jq-1.6 binary version due to github download page change.
 v0.05:
    - switch back to github official site for package download.
 v0.04:
